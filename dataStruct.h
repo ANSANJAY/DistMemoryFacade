@@ -12,3 +12,11 @@ struct HTEntry
 };
 
 struct HTEntry Htable[tablesize]; 
+
+struct machine_id 
+{
+	char *ip_address;
+	int tcpportno;
+	int udpportno;
+}
+node[20];

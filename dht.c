@@ -5,20 +5,6 @@
 
 
 
-
-
-//--------------------------------------- hash table functions ----------------------------------------------
-
-
-struct machine_id 
-{
-	char *ip_address;
-	int tcpportno;
-	int udpportno;
-}
-node[20];
-
-
 int forYou(int num,char request[])		//check whether request is for current node or not
 {
 	
