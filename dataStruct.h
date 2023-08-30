@@ -1,3 +1,6 @@
+#include "headers.h"
+#include "declarations.h"
+
 struct node 
 {
 	int data;
