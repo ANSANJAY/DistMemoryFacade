@@ -75,6 +75,19 @@ This project serves as a simplified simulation of the Hadoop Distributed File Sy
 - :arrows_counterclockwise: Automatic key-value forwarding to appropriate nodes.
 - :computer: TCP and UDP networking.
 
+```lua
+       +----------------------UDP/TCP----------------------+
+       |                                                    |
+       |                                                    |
+       v                                                    |
+  +--------+      UDP/TCP      +--------+      UDP/TCP      |
+  | Node 1 |------------------>| Node 2 |------------------>| Node 3 |
+  +--------+  GET / PUT        +--------+  GET / PUT        +--------+
+       ^                                                    |
+       |                                                    |
+       |                                                    |
+       +---------------------UDP/TCP------------------------+
+```
 ## Code Overview :page_with_curl:
 
 The project mainly consists of three parts:
