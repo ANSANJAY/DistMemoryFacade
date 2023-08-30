@@ -119,6 +119,19 @@ int extractNodeno(char * buff)
  	return atoi(nodeno);
 }
 
+/***
+This function decides if a request is a GET request or a PUT request.
+
+- **Parameters**:
+  - `rec_buff[]`: The received buffer which contains either 'GET' or 'PUT'.
+
+- **Operations**:
+  - Checks if the first character in `rec_buff` is 'g' or 'G' (for a GET request).
+  - Returns 1 for GET requests and 0 otherwise.
+***/
+
+
+
 int getOrPut(char rec_buff[])			//method to check  whether put or get request.
 {
 
