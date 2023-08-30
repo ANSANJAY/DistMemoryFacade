@@ -1,6 +1,22 @@
 #include "headers.h"
 #include "declarations.h"
 
+/***
+This function forwards UDP packets to the next node in the ring topology. 
+
+- **Parameters**: 
+  - `destination_node`: The next node to which data should be forwarded.
+  - `sendString[]`: The data that needs to be forwarded.
+
+- **Operations**:
+  - It calculates the next destination node by taking the modulo with `N` (`destination_node = destination_node % N`).
+  - It uses `gethostbyname()` to get the address of the destination node.
+  - It creates a UDP socket (`SOCK_DGRAM`) and initializes its parameters.
+  - Finally, it forwards the data to the destination node using `sendto()`.
+
+
+
+***/
 void forwardUDP( int destination_node ,char sendString[] )
 {
 
