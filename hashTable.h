@@ -5,7 +5,8 @@
 //----------------------hash table functions-----------------
 
 void initialiseHashtable()
-// Initializes the hash table entries to 0 and NULL
+// initializes the hash table. It sets the `data` field to 0 and the `link` field to NULL for each entry.
+
 {
 
 	int i=0;
@@ -20,7 +21,8 @@ void initialiseHashtable()
 
 
 void appendNode(struct node *start,int data)
-// Appends a node to a linked list in case of a hash collision
+// This function appends a node with a given data value at the end of a given linked list. This is used to resolve hash collisions.
+
 {
 	
 	while(start->link!=NULL)
@@ -39,7 +41,10 @@ void appendNode(struct node *start,int data)
 
 int addToHashtable(int key,int data)
 // Inserts a key-value pair into the hash table.
-// It handles hash collisions by chaining.
+// This function adds a key-value pair to the hash table. It has several cases to consider:
+// `Key must satisfy the eqn K % N = num`: Only keys that satisfy this condition are allowed to be added to this node.
+// `First Entry`: If the entry is empty, the data is added.
+//`Subsequent Collisions`: If the entry already exists, it handles collisions by chaining.
 
 {
  
