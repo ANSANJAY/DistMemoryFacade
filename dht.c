@@ -1,47 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#define TRUE   1
-#define FALSE  0
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <sys/time.h>
-
-#if 1
-#define N 3
-#define ip1 "127.0.0.1"
-#define ip2 "127.0.0.1"
-#define ip3 "127.0.0.1"
-#endif
-#define tablesize 100
-
-
-struct node 
-{
-	int data;
-	struct node *link;
-};
-int num=0;
-#if 0
-int N=2;
-char ip1[20];
-char ip2[20];
-#endif
-struct HTEntry
-{
-	int data;
-	struct node *link;
-	
-};
-
-struct HTEntry Htable[tablesize]; 
-
-
+#include "headers.h"
+#include "declarations.h"
+#include "dataStruct.h"
 
 //----------------------hash table functions-----------------
 
