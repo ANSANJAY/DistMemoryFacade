@@ -183,6 +183,10 @@ Function forwardUDP(destination_node, message):
     ```
 2. Follow the on-screen instructions for `PUT` and `GET` operations.
 
+## Contribution Guidelines 🤝
+
+Interested in contributing? We welcome pull requests, bug fixes, and issue reports. Before proposing a change, discuss it via issues.
+
 ## License :scroll:
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
