@@ -5,172 +5,7 @@
 #include "msgHandler.h"
 #include "udp.h"
 #include "utils.h"
-int num=0; // have to check 
-
-char *forwardedData(char inputbuff[],char flag)			//Called to prepare data to be forwaded to next node
-{
-	
-	int key,tcpportno;
-	char keybuff[5],portbuff[5],fl[2];
-	fl[0]=flag;
-	fl[1]='\0';
-	char *outputbuff=(char *)malloc(sizeof(char)*40),nodebuff[3];
-
- 	if(getOrPut(inputbuff)==1)
-  		key = extractKeyFromGet(inputbuff);		//extract key from data get before preparing sending data
- 	else
-		key = extractKeyFromPut(inputbuff);		//extract key from data get before preparing sending data
-
-	tcpportno=node[num].tcpportno;		
-
-	itoa(tcpportno,portbuff);					//convert integer port number to character array
-
-	itoa(key,keybuff);						//convert integer key to character array
-
-	strcpy(outputbuff,"xxx(");   					//start forwarding data with xxx( 
-
-	strcat(outputbuff,keybuff);					
-
-	strcat(outputbuff,",");						
-
-	strcat(outputbuff,portbuff);					
-
-	strcat(outputbuff,")");   					
-
-	itoa(num,nodebuff);				//convert integer node number to character array
-
-	strcat(outputbuff,nodebuff);					 
-
-	strcat(outputbuff,"[");						
-
-	strcat(outputbuff,node[num].ip_address);	
-
-	strcat(outputbuff,",");						
-
-	strcat(outputbuff,fl);						
-
-	strcat(outputbuff,"]");						
-
-	outputbuff[strlen(outputbuff)+1] = '\0';			//end 
-
-	return outputbuff;					//return the address of data in memory which is to be forwaded
-}
-
-int addToHashtable(int key,int data)
-// Inserts a key-value pair into the hash table.
-// This function adds a key-value pair to the hash table. It has several cases to consider:
-// `Key must satisfy the eqn K % N = num`: Only keys that satisfy this condition are allowed to be added to this node.
-// `First Entry`: If the entry is empty, the data is added.
-//`Subsequent Collisions`: If the entry already exists, it handles collisions by chaining.
-
-{
- 
-	int maxlimit_key = (tablesize-1)*N+num;
-	int relativeIndex,returnvalue;
-
-	if(key % N == num && key <= maxlimit_key && key > -1)
-	{
-		// Key must satisfy the eqn K % N = num then only its for current node
-
-		relativeIndex = (key - num)/N;   
-		
-		// case 1 : if hash table entry is empty 
-		
-		if(Htable[relativeIndex].data==0)
-		{
-
-     			Htable[relativeIndex].data = data;	
-     			returnvalue=1;
-   		}
-  
-		
-		// case 2 : if exactly one entry in particular entry of hashtable (Ist Collision)
-
-   		else if(Htable[relativeIndex].data!=0 && Htable[relativeIndex].link==NULL)
-		{
-
-    			Htable[relativeIndex].link = (struct node *)malloc(sizeof(struct node));
-    			Htable[relativeIndex].link->data = data;
-    			Htable[relativeIndex].link->link = NULL;
-    			returnvalue=1;
-   		}
-
-		// case 3: Subsequent Collisions
-
-		else
-		{
-     			appendNode(Htable[relativeIndex].link,data);
-      			returnvalue=1;
-   		}
-
- 		printf("\nRESULT: AT KEY : %d, VALUE INSERTED : %d IN HASH TABLE SUCCESS\nENTER NEW GET/PUT REQUEST :",key,data);
- 	}
-	
- 	else
-	{
-  		printf("\nERROR:KEY = %d,VALUE = %d CANNOT ADD IN TABLE, MAX KEY LIMIT = %d\nENTER NEW GET/PUT 				REQUEST :",key,data,maxlimit_key);
-  		
-		returnvalue=0;
- 	}
- 	return returnvalue;
-}
-
-
-
-int fetchValueFromHT(int key)		//fun() to retrieve value corresponding to a key from hash table
-{
-	
-	int relativeIndex = (key-num)/N,return_value;		//calculate index of key  in hash table
-
-	if(Htable[relativeIndex].link == NULL)					//first value in the list
-		return_value =  Htable[relativeIndex].data;
-
-  	else
-	{
-    		struct node *start = Htable[relativeIndex].link;
-     		while(start->link!=NULL)					
-      			start = start->link;					// progess pointer to last element
-     		return_value =  start->data;					//assign last element 
-   	}   
-	return return_value;
-}
-
-
-void displayHtable()
-//Displays the content of the hash table.
-{
-
-	int from_key = num,to_key = (tablesize-1)*N + num;
-
-	if(from_key > to_key)
-	{
-		
-		int temp = from_key;
-		from_key = to_key;
-		to_key = temp ;
-	}
-
-	printf("\n-----Hash Table Contents(%d--%d)------------\n",from_key,to_key);
-
-	if(from_key % N == num && to_key % N == num)
-	{
-
- 		int i,from=(from_key - num)/N,to = (to_key - num)/N,fetchValue,key;
-
- 		for(i=from;i<=to;i++)
-		{
-
-			key = i*N+num;
-			fetchValue = fetchValueFromHT(key);
-  			if(fetchValue !=0)
-  				printf("\nkey : %d ===== value : %d\n",key,fetchValueFromHT(key));
- 		}
-	}
- 	else
-		printf("invalid keys , hash table cannot be displayed\n");
-
- 	printf("-----------------------------------------------------\nENTER NEW GET/PUT REQUEST:");
-}
+int num=0; 
 
 int main() {
 
@@ -414,7 +249,7 @@ int main() {
             's') // Get request and the value is to be fetched from hash table
         {
 
-          int valuefetched = fetchValueFromHT(key);
+          int valuefetched = fetchValueFromHT(key,num);
           if (valuefetched != 0) {
 
             strcpy(send_data, "value = ");
@@ -454,7 +289,7 @@ int main() {
           // confirmation message back to parent node on which the request was
           // originallly invoked by the user
 
-          if (addToHashtable(key, atoi(recv_data)))
+          if (addToHashtable(key, atoi(recv_data),num))
             strcpy(send_data, "RESULT: put operation has been done "
                               "successfully.  Value added on node no :");
           else
@@ -486,7 +321,7 @@ int main() {
       // If the input is 'r' or 'R', it displays the hash table
       if (rec_buff[0] == 'r' || rec_buff[0] == 'R') {
 
-        displayHtable();
+        displayHtable(num);
       }
 
       /***
@@ -518,7 +353,7 @@ request.
           flag = 's'; // indicates that last node will send a value
 
         out = forwardedData(rec_buff,
-                            flag); // fun() to prepare the data to be forwaded
+                            flag,num); // fun() to prepare the data to be forwaded
 
         for (i = 0; i < strlen(out); i++)
           outputbuff[i] =
@@ -544,7 +379,7 @@ request.
           if (key <= maxkeylimit) {
 
             value = fetchValueFromHT(
-                key); // call fun() to fetch value from hash table
+                key,num); // call fun() to fetch value from hash table
 
             if (value == 0)
 
@@ -568,7 +403,7 @@ request.
         } else {
           // processing put request on the same node
           addToHashtable(extractKeyFromPut(rec_buff),
-                         extractValueFromPut(rec_buff));
+                         extractValueFromPut(rec_buff),num);
         }
 
       } // else ends
