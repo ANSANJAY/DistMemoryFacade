@@ -8,6 +8,7 @@
 
 int main() {
 
+//initializes variables for sockets, socket addresses, buffers, and file descriptors
   int opt = TRUE, TransferValue = 0;
   int master_socket, sock_udp;
   struct sockaddr_in address, server_addr_udp, client_addr;
@@ -122,6 +123,7 @@ int main() {
     else
       maxfd = sock_udp;
     select(maxfd + 1, &readfds, NULL, NULL, NULL);
+  //`select()` to multiplex between UDP socket (`sock_udp`), TCP socket (`master_socket`), and standard input (`0`).
 
     if (FD_ISSET(master_socket, &readfds)) {
 
