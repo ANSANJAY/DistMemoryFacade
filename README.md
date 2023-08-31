@@ -2,6 +2,20 @@
 Distributed system offering unified memory access across multiple nodes, providing an illusion of a single, large memory chunk. Inspired by models like Hadoop's DFS. Built primarily in C with socket programming.
 
 
+```lua
+       +----------------------UDP/TCP----------------------+
+       |                                                    |
+       |                                                    |
+       v                                                    |
+  +--------+      UDP/TCP      +--------+      UDP/TCP      |
+  | Node 1 |------------------>| Node 2 |------------------>| Node 3 |
+  +--------+  GET / PUT        +--------+  GET / PUT        +--------+
+       ^                                                    |
+       |                                                    |
+       |                                                    |
+       +---------------------UDP/TCP------------------------+
+```
+
 ## Table of Contents :scroll:
 
 1. [Introduction](#introduction)
@@ -13,9 +27,11 @@ Distributed system offering unified memory access across multiple nodes, providi
 7. [Technologies](#technologies)
 8. [Getting Started](#getting-started)
 9. [Usage](#usage)
-10. [Contributing](#contributing)
-11. [License](#license)
-12. [Acknowledgments](#acknowledgments)
+10. [Output Explanation](#output-explanation)
+11. [Displaying the Hash Table](#displaying-the-hash-table)
+12. [Contributing](#contributing)
+13. [License](#license)
+14. [Acknowledgments](#acknowledgments)
 
 
 # Distributed Transparent Memory 🌐💽
@@ -75,19 +91,6 @@ This project serves as a simplified simulation of the Hadoop Distributed File Sy
 - :arrows_counterclockwise: Automatic key-value forwarding to appropriate nodes.
 - :computer: TCP and UDP networking.
 
-```lua
-       +----------------------UDP/TCP----------------------+
-       |                                                    |
-       |                                                    |
-       v                                                    |
-  +--------+      UDP/TCP      +--------+      UDP/TCP      |
-  | Node 1 |------------------>| Node 2 |------------------>| Node 3 |
-  +--------+  GET / PUT        +--------+  GET / PUT        +--------+
-       ^                                                    |
-       |                                                    |
-       |                                                    |
-       +---------------------UDP/TCP------------------------+
-```
 ## Code Overview :page_with_curl:
 
 The project mainly consists of three parts:
@@ -187,14 +190,124 @@ Function forwardUDP(destination_node, message):
     ```
     gcc -o dht dht.c
     ```
+Certainly, here's a sample `README.md` file with emojis to make it more engaging. Just copy and paste the below text into your README file.
 
-## Usage :zap:
+---
 
-1. Start the node:
-    ```
-    ./dht
-    ```
-2. Follow the on-screen instructions for `PUT` and `GET` operations.
+## Usage 💻
+
+To start the program and initialize your 3-node token ring topology, follow these steps:
+
+rum the make command which will make `node0`,`node1`,`node2`
+
+```bash
+make
+```
+
+1️⃣ Open three different terminal windows.
+
+2️⃣ In the first terminal window, compile and run `node0.c`:
+```bash
+./node0
+```
+
+3️⃣ In the second terminal window, compile and run `node1.c`:
+```bash
+./node1
+```
+
+4️⃣ In the third terminal window, compile and run `node2.c`:
+```bash
+./node2
+```
+
+📘 Each node terminal will display instructions for interacting with the distributed hash table.
+
+---
+
+## Output Explanation 📖
+
+### Node Instructions 📜
+
+Each terminal will display similar instruction sets:
+
+- **PUT request**: To insert a value into the hash table, use the format `PUT(<key>,<value>)`. 📥
+- **GET request**: To retrieve a value from the hash table, use the format `GET(<key>)`. 📤
+- **Hash Table**: To view the current state of the hash table, enter `r`. 📚
+
+### Distributed Hash Table Operations 🌐
+
+📝 Here's a breakdown of the operations:
+
+#### PUT Operation 📥
+
+1. **Forward the Request** 📡: If the node isn't responsible for the key, it will forward the request to the next node.
+```plaintext
+FORWARD REQUEST : 'xxx(2,2000)0[127.0.0.1,r]' has been forwarded to node ---->1
+```
+
+2. **Process Locally** 🏠: If the node is responsible for the key, it processes the request locally.
+```plaintext
+PROCESSING THE REQUEST HERE:
+RESULT: AT KEY : 3, VALUE INSERTED : 10 IN HASH TABLE SUCCESS
+```
+
+![](./images/1.png)
+
+#### GET Operation 📤
+
+🔍 The GET operation behaves similarly to the PUT operation.
+
+![](./images/2.png)
+
+
+### UDP Communication 📡
+
+Nodes communicate through UDP packets.
+```plaintext
+UDP PACKET RECEIVED FROM (IP ADDRESS : 127.0.0.1 , PORT NO : 52071 , NODE NO : 0)  : xxx(2,2000)0[127.0.0.1,r]
+```
+![](./images/3.png)
+
+![](./images/4.png)
+
+
+---
+
+## Displaying the Hash Table 📊
+
+### Command 📝
+
+To view the hash table for any node, simply enter `r`. This will display the current state of that node's hash table.
+
+### Example Output 👀
+
+#### Terminal 1 (Node 0) 🖥
+
+After several `PUT` operations, Node 0 has the following in its hash table:
+```plaintext
+-----Hash Table Contents(0--297)------------
+key : 3 ===== value : 5
+```
+
+#### Terminal 2 (Node 1) 🖥
+
+After several `PUT` operations, Node 1 has the following in its hash table:
+```plaintext
+-----Hash Table Contents(1--298)------------
+key : 7 ===== value : 3
+```
+
+![](./images/5.png)
+
+
+### Explanation 📚
+
+1. **key : X ===== value : Y**: This shows the key-value pair that the node currently maintains.
+  
+2. **Hash Table Contents(X--Y)**: This indicates the range of keys for which the node is responsible.
+
+---
 
 ## Contribution Guidelines 🤝
 

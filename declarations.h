@@ -9,7 +9,7 @@
 #endif
 #define tablesize 100
 
-int num=0; // have to check 
+
 #if 0
 int N=2;
 char ip1[20];

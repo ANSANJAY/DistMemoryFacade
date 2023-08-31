@@ -39,55 +39,6 @@ void itoa(int n,char buff[])
 
 
 
-char *forwardedData(char inputbuff[],char flag)			//Called to prepare data to be forwaded to next node
-{
-	
-	int key,tcpportno;
-	char keybuff[5],portbuff[5],fl[2];
-	fl[0]=flag;
-	fl[1]='\0';
-	char *outputbuff=(char *)malloc(sizeof(char)*40),nodebuff[3];
-
- 	if(getOrPut(inputbuff)==1)
-  		key = extractKeyFromGet(inputbuff);		//extract key from data get before preparing sending data
- 	else
-		key = extractKeyFromPut(inputbuff);		//extract key from data get before preparing sending data
-
-	tcpportno=node[num].tcpportno;		
-
-	itoa(tcpportno,portbuff);					//convert integer port number to character array
-
-	itoa(key,keybuff);						//convert integer key to character array
-
-	strcpy(outputbuff,"xxx(");   					//start forwarding data with xxx( 
-
-	strcat(outputbuff,keybuff);					
-
-	strcat(outputbuff,",");						
-
-	strcat(outputbuff,portbuff);					
-
-	strcat(outputbuff,")");   					
-
-	itoa(num,nodebuff);				//convert integer node number to character array
-
-	strcat(outputbuff,nodebuff);					 
-
-	strcat(outputbuff,"[");						
-
-	strcat(outputbuff,node[num].ip_address);	
-
-	strcat(outputbuff,",");						
-
-	strcat(outputbuff,fl);						
-
-	strcat(outputbuff,"]");						
-
-	outputbuff[strlen(outputbuff)+1] = '\0';			//end 
-
-	return outputbuff;					//return the address of data in memory which is to be forwaded
-}
-
 
 char *extractIpaddress(char *buff,char a,char b)
 {
