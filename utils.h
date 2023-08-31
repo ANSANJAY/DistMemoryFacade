@@ -128,6 +128,11 @@ This function decides if a request is a GET request or a PUT request.
 - **Operations**:
   - Checks if the first character in `rec_buff` is 'g' or 'G' (for a GET request).
   - Returns 1 for GET requests and 0 otherwise.
+
+	Code Explanation:
+
+- `if(rec_buff[0] == 'g' || rec_buff[0] == 'G') return 1; else return 0;`: Checks the first character to identify if it's a GET request (returns 1) or PUT request (returns 0).
+
 ***/
 
 
