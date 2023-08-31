@@ -8,7 +8,8 @@
 
 int main() {
 
-//initializes variables for sockets, socket addresses, buffers, and file descriptors
+  // initializes variables for sockets, socket addresses, buffers, and file
+  // descriptors
   int opt = TRUE, TransferValue = 0;
   int master_socket, sock_udp;
   struct sockaddr_in address, server_addr_udp, client_addr;
@@ -28,8 +29,8 @@ int main() {
 	scanf("%s",ip2);
 #endif
   fd_set readfds; //	Socket file descriptors we want to wake up for, using
-                  //select()
-
+                  // select()
+  // Sets up the current and next node details
   node[num].ip_address = ip1;
   node[num].tcpportno = 2000 + num * 2;
   node[num].udpportno = node[num].tcpportno + 1;
@@ -38,6 +39,7 @@ int main() {
   node[(num + 1) % N].udpportno = node[(num + 1) % N].tcpportno + 1;
 
   // working with UDP
+  // Clears the console and prints instructions.
 
   system("clear");
   printf("       INSTRUCTIONS \n\n  =================NODE "
@@ -64,7 +66,7 @@ int main() {
   server_addr_udp.sin_addr.s_addr = INADDR_ANY;
   bzero(&(server_addr_udp.sin_zero),
         8); // bzero() sets all values in a buffer to zero.
-
+            // UDP Socket Creation and Binding
   if (bind(sock_udp, (struct sockaddr *)&server_addr_udp,
            sizeof(struct sockaddr)) == -1) // Binding UDP socket
   {
@@ -72,7 +74,7 @@ int main() {
     exit(1);
   }
   addr_len = sizeof(struct sockaddr);
-  // working with TCP
+  // TCP Socket Creation and Binding
   if ((master_socket = socket(AF_INET, SOCK_STREAM, 0)) ==
       0) // Create TCP Socket
   {
@@ -107,8 +109,10 @@ int main() {
 
   while (1) {
 
-    FD_ZERO(&readfds); // clears out the fd_set-readfds, so that it doesn't
-                       // contain any file descriptors.
+    FD_ZERO(
+        &readfds); // clears out the fd_set-readfds, so that it doesn't
+                   // contain any file descriptors.  Clears the file descriptor
+                   // set and adds UDP, TCP sockets, and standard input to it.
 
     FD_SET(sock_udp, &readfds); // adds file descriptor "sock_udp" to the
                                 // fd_set,select will return
@@ -123,8 +127,12 @@ int main() {
     else
       maxfd = sock_udp;
     select(maxfd + 1, &readfds, NULL, NULL, NULL);
-  //`select()` to multiplex between UDP socket (`sock_udp`), TCP socket (`master_socket`), and standard input (`0`).
+    //`select()` to multiplex between UDP socket (`sock_udp`), TCP socket
+    //(`master_socket`), and standard input (`0`).
+    // Waits for any activity on the file descriptors.
 
+    // Checks if there's activity on the TCP socket.
+    //  it processes incoming data
     if (FD_ISSET(master_socket, &readfds)) {
 
       /* Open the new socket as 'new_socket' */
@@ -145,8 +153,8 @@ int main() {
       if (TransferValue != 0) { // means put request was made
 
         // means put request was made on this node , and this node need to
-        // supply the value 					'TransferValue' back to
-        // client
+        // supply the value 					'TransferValue'
+        // back to client
 
         itoa(TransferValue, replyBuffer); // as sooon as conection is made, TCP
                                           // server send value to client
@@ -169,7 +177,7 @@ int main() {
         close(new_socket);
       }
     }
-
+    // data is ready to be read from the UDP socket
     if (FD_ISSET(sock_udp,
                  &readfds)) /*Check udp_socket has data available to be read */
     {
@@ -177,6 +185,7 @@ int main() {
       int len = recvfrom(sock_udp, rec_buff, 5000, 0,
                          (struct sockaddr *)&client_addr, &addr_len);
       // recvfrom() function receives a message
+      // Receives data from the UDP socket and stores it in `rec_buff
       rec_buff[len] = '\0';
       printf("\n--------\nUDP PACKET RECIEVED FROM (IP ADDRESS : %s , PORT NO "
              ": %d , NODE NO : %d)  : ",
@@ -188,7 +197,6 @@ int main() {
       printf("%s\n", rec_buff);
 
       // Either get request is recieved or put request is recieved
-
       // Check whether the req is to be forwarded or to be processed by the
       // current node itself
 
@@ -277,8 +285,8 @@ int main() {
           printf("\nVALUE RECIEVED (ON TCP CONNECTION) FROM NODE NO %d = %s ",
                  nodeno, recv_data);
           // now insert the key,value in hash table of this node and send
-          // confirmation message 						back to parent
-          // node on which the request was originallly invoked by the  user
+          // confirmation message back to parent node on which the request was
+          // originallly invoked by the user
 
           if (addToHashtable(key, atoi(recv_data)))
             strcpy(send_data, "RESULT: put operation has been done "
@@ -302,18 +310,31 @@ int main() {
 
     if (FD_ISSET(0,
                  &readfds)) // FD_ISSET()Returns a non-zero value if the bit for
-                            // the file descriptor 							'0' is set in the file
-                            // descriptor set pointed to by readfds, and 0
-                            // otherwise.
+                            // the file descriptor 							'0' is set
+                            // in the file descriptor set pointed to by readfds,
+                            // and 0 otherwise.
     {
 
       char rec_buff[5000];
-      gets(rec_buff);
-
+      gets(rec_buff); //  Reads the input into `rec_buff`
+      // If the input is 'r' or 'R', it displays the hash table
       if (rec_buff[0] == 'r' || rec_buff[0] == 'R') {
 
         displayHtable();
       }
+
+      /***
+       If the request is to be forwarded (`forYou(num, rec_buff) == 0`), it
+prepares the data to be forwarded and sends it to the next node.
+
+If the request is to be processed locally, it checks whether it's a GET or PUT
+request.
+
+    - For a GET request, it fetches the value from the local hash table.
+
+    - For a PUT request, it adds the key-value pair to the local hash table.
+
+      ****/
 
       else if (forYou(num, rec_buff) ==
                0) // fun return 1 if for you;return 0 if not for you
