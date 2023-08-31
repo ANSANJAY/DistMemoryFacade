@@ -3,7 +3,7 @@
 
 /***
 This function forwards UDP packets to the next node in the ring topology. 
-
+Forwards a given string (`sendString`) to another node (`destination_node`) using UDP.
 - **Parameters**: 
   - `destination_node`: The next node to which data should be forwarded.
   - `sendString[]`: The data that needs to be forwarded.
@@ -14,9 +14,26 @@ This function forwards UDP packets to the next node in the ring topology.
   - It creates a UDP socket (`SOCK_DGRAM`) and initializes its parameters.
   - Finally, it forwards the data to the destination node using `sendto()`.
 
+  Code Explanation:
 
+- `destination_node = destination_node % N;`: This line ensures that the destination node ID wraps around once it reaches the upper limit (`N`), creating a ring structure.
+
+- `int sock; struct sockaddr_in server_addr; struct hostent *host;`: Declare variables for the UDP socket, destination server address, and host information.
+
+- `host = (struct hostent *) gethostbyname(node[destination_node].ip_address);`: Resolves the IP address of the destination node.
+
+- `if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1) { ... }`: Creates a UDP socket. If it fails, it exits the program.
+
+- `server_addr.sin_family = AF_INET; ... bzero(&(server_addr.sin_zero),8);`: Initializes the `server_addr` struct with the destination node's details.
+
+- `sendto(sock, sendString, strlen(sendString), 0,(struct sockaddr *)&server_addr, sizeof(struct sockaddr));`: Sends `sendString` to `destination_node` via UDP.
+
+- `printf("\nFORWARD REQUEST : '%s' has been forwarded to node ---->%d\n",sendString,destination_node);`: Logs the forward operation.
+
+- `close(sock);`: Closes the UDP socket.
 
 ***/
+
 void forwardUDP( int destination_node ,char sendString[] )
 {
 
