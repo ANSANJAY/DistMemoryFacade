@@ -67,7 +67,6 @@ In today's data-driven world, there's an increasing need to store and manage vas
 
 **End Goal:**  
 To present the end user with the illusion that they're accessing a large, unified memory chunk, even though the memory is distributed across multiple physical nodes.
-Certainly! Below is a more detailed README.md template, which includes your additional sections.
 
 # Distributed Hash Table Implementation :earth_americas: :floppy_disk:
 
